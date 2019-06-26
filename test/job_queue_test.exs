@@ -3,7 +3,9 @@ defmodule EctoJobScheduler.JobQueueTest do
   use BankingPayment.DataCase
 
   alias Ecto.Multi
+
   alias EctoJobScheduler.Logger.Context
+
   alias EctoJobScheduler.Test.TestJobQueue
 
   describe "perform/3" do

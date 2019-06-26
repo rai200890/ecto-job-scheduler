@@ -1,7 +1,7 @@
 defmodule EctoJobScheduler.Support.Helpers.EctoJobHelpers do
   @moduledoc false
-  alias EctoJobScheduler.Test.Repo
   alias EctoJobScheduler.JobQueue
+  alias EctoJobScheduler.Test.Repo
 
   import ExUnit.Assertions
   import EctoJob.JobQueue

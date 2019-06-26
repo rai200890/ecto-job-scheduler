@@ -4,8 +4,8 @@ defmodule EctoJobScheduler.JobSchedulerTest do
 
   alias Ecto.{Changeset, Multi}
   alias EctoJobScheduler.Logger.Context
-  alias EctoJobScheduler.Test.TestJobScheduler
   alias EctoJobScheduler.Test.TestJob
+  alias EctoJobScheduler.Test.TestJobScheduler
 
   describe "schedule/3" do
     test "put context as an ecto job param" do

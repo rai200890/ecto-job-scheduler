@@ -8,18 +8,19 @@ use Mix.Config
 # if you want to provide default values for your application for
 # third-party users, it should be done in your "mix.exs" file.
 
-# You can configure your application as:
-#
-#     config :ecto_job_scheduler, key: :value
-#
-# and access this configuration in your application as:
-#
-#     Application.get_env(:ecto_job_scheduler, :key)
-#
-# You can also configure a third-party app:
-#
-#     config :logger, level: :info
-#
+import System, only: [get_env: 1]
+import String, only: [to_integer: 1]
+
+config :ecto_job_scheduler, EctoJobScheduler.Test.Repo,
+  adapter: Ecto.Adapters.Postgres,
+  database: get_env("DATABASE_NAME") || "ecto_job_scheduler",
+  username: get_env("DATABASE_USER") || "user",
+  password: get_env("DATABASE_PASSWORD") || "pass",
+  hostname: get_env("DATABASE_HOST") || "localhost",
+  port: (get_env("DATABASE_PORT") || "5432") |> to_integer(),
+  pool_size: (get_env("DATABASE_POOL_SIZE") || "10") |> to_integer(),
+  pool: Ecto.Adapters.SQL.Sandbox,
+  priv: "test/support/"
 
 # It is also possible to import configuration files, relative to this
 # directory. For example, you can emulate configuration per environment
