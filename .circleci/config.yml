@@ -1,0 +1,45 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: elixir:1.8.2-alpine
+        name: app  
+        environment:
+            MIX_ENV: test
+            DATABASE_USER: user
+            DATABASE_PASSWORD: pass
+            DATABASE_PORT: 5432
+            DATABASE_HOST: db
+            DATABASE_NAME: ecto_job_scheduler_test
+            DATABASE_POOL_SIZE: 5
+        depends_on:
+          - db
+      - image: postgres:9.6-alpine
+        name: db
+        environment:
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: pass
+          POSTGRES_DB: ecto_job_scheduler_test
+   
+    working_directory: ~/app
+
+    steps:
+      - checkout
+      - run: mix do local.hex --force, local.rebar --force
+      - run: mix do deps.get, compile --warnings-as-errors
+      - run: mix format --check-formatted
+      - run: mix credo --strict
+      - run: mix do ecto.create, ecto.migrate
+      - run: mix test
+   
+ 
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only: /.*/
+            tags:
+              only: /.*/
