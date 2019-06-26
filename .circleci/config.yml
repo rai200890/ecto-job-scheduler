@@ -30,7 +30,9 @@ jobs:
       - run: mix format --check-formatted
       - run: mix credo --strict
       - run: mix do ecto.create, ecto.migrate
-      - run: mix test
+      - run: mix coveralls.html
+      - store_artifacts:
+          path: cover/
    
  
 workflows:

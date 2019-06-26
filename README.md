@@ -1,6 +1,8 @@
 # EctoJobScheduler
 
-**TODO: Add description**
+[![CircleCI](https://circleci.com/gh/rai200890/ecto-job-scheduler/tree/master.svg?style=svg)](https://circleci.com/gh/rai200890/ecto-job-scheduler/tree/master)
+
+Helpers for scheduling Jobs defined in [EctoJob](https://github.com/mbuhot/ecto_job)
 
 ## Installation
 
