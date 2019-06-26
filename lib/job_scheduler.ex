@@ -1,0 +1,72 @@
+defmodule EctoJobScheduler.JobScheduler do
+  @moduledoc false
+  alias Ecto.Multi
+  alias EctoJobScheduler.Logger.Context
+
+  @spec schedule(
+          Ecto.Multi.t(),
+          atom(),
+          map(),
+          nil | keyword() | map()
+        ) :: any()
+  def schedule(%Multi{} = multi, job, params, config) do
+    context = Context.get() |> Enum.into(%{}) |> Map.drop([:params, "params"])
+    params = Map.put_new(params, "context", context)
+
+    type = job |> Atom.to_string() |> String.split(".") |> List.last()
+    multi_name = type |> Macro.underscore() |> String.to_atom()
+
+    multi
+    |> config[:job_queue].enqueue(
+      multi_name,
+      Map.merge(%{"type" => type}, params),
+      max_attempts: job.config()[:max_attempts]
+    )
+  end
+
+  @spec schedule(atom() | %{config: nil | keyword() | map()}, map(), nil | keyword() | map()) ::
+          any()
+  def schedule(job, params, config) do
+    schedule(Multi.new(), job, params, config)
+  end
+
+  @spec run(atom(), map(), nil | [repo: atom, job_queue: atom]) :: {:error, any()} | {:ok, any()}
+  def run(job, params, config) do
+    multi = Multi.new() |> schedule(job, params, config)
+
+    case config[:repo].transaction(multi) do
+      {:ok, result} -> {:ok, result}
+      {:error, reason} -> {:error, reason}
+    end
+  end
+
+  def run(multi, config) do
+    config[:repo].transaction(multi)
+  end
+
+  defmacro __using__(config \\ []) do
+    quote do
+      alias EctoJobScheduler.JobScheduler
+
+      def config do
+        unquote(config)
+      end
+
+      def schedule(multi, job, params) do
+        JobScheduler.schedule(multi, job, params, config())
+      end
+
+      def schedule(job, params) do
+        JobScheduler.schedule(job, params, config())
+      end
+
+      def run(job, params) do
+        JobScheduler.run(job, params, config())
+      end
+
+      def run(multi) do
+        JobScheduler.run(multi, config())
+      end
+    end
+  end
+end

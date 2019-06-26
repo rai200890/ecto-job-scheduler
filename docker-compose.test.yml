@@ -1,0 +1,21 @@
+version: '3'
+services:
+  app:
+    build:
+      args:
+        MIX_ENV: test
+    command: iex -S mix phx.server
+    environment:
+      - MIX_ENV=test
+      - DATABASE_USER=user
+      - DATABASE_PASSWORD=pass
+      - DATABASE_PORT=5432
+      - DATABASE_HOST=db
+      - DATABASE_NAME=ecto_job_scheduler_test
+      - DATABASE_POOL_SIZE=5
+
+  db:
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_DB=ecto_job_scheduler_test

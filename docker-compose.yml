@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: .
+    volumes:
+      - .:/app
+      - /app/deps
+      - /app/_build
+    depends_on:
+      - db
+  
+  db:
+    image: postgres:9.6-alpine
+    ports:
+      - 5432:5432
