@@ -18,7 +18,11 @@ defmodule EctoJobScheduler.MixProject do
       ],
       description: description(),
       package: package(),
-      source_url: "https://github.com/rai200890/ecto-job-scheduler"
+      source_url: "https://github.com/rai200890/ecto-job-scheduler",
+      docs: [
+        main: "readme",
+        extras: ["README.md"]
+      ]
     ]
   end
 
@@ -50,7 +54,8 @@ defmodule EctoJobScheduler.MixProject do
       {:ecto_job, "~> 2.1"},
       {:credo, "~> 1.1", only: [:dev, :test], runtime: false},
       {:excoveralls, "~> 0.10", only: :test},
-      {:ex_doc, "~> 0.14", only: :dev, runtime: false}
+      {:ex_doc, "~> 0.14", only: :dev, runtime: false},
+      {:dialyxir, "~> 0.5", only: [:dev], runtime: false}
     ]
   end
 end

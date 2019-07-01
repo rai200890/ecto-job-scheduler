@@ -1,5 +1,8 @@
 defmodule EctoJobScheduler.JobScheduler do
-  @moduledoc false
+  @moduledoc """
+  Defines scheduler for multiple EctoJobScheduler.Job
+  """
+
   alias Ecto.Multi
   alias EctoJobScheduler.Logger.Context
 

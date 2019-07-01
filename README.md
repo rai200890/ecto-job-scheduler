@@ -1,8 +1,12 @@
 # EctoJobScheduler
 
 [![CircleCI](https://circleci.com/gh/rai200890/ecto-job-scheduler/tree/master.svg?style=svg)](https://circleci.com/gh/rai200890/ecto-job-scheduler/tree/master)
+![Hex.pm](https://img.shields.io/hexpm/v/ecto_job_scheduler.svg)
+![Hex.pm](https://img.shields.io/hexpm/l/ecto_job_scheduler.svg)
 
 Helpers for scheduling Jobs defined in [EctoJob](https://github.com/mbuhot/ecto_job)
+
+Thanks [joaothallis](https://github.com/joaothallis), [ramondelemos](https://github.com/ramondelemos), [victorprs](https://github.com/victorprs) 
 
 ## Installation
 
@@ -12,7 +16,7 @@ by adding `ecto_job_scheduler` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:ecto_job_scheduler, "~> 0.1.0"}
+    {:ecto_job_scheduler, "~> 0.2.0"}
   ]
 end
 ```

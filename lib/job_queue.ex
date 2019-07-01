@@ -1,5 +1,7 @@
 defmodule EctoJobScheduler.JobQueue do
-  @moduledoc false
+  @moduledoc """
+   Defines EctoJob.JobQueue based on defined EctoJobScheduler.Job
+  """
 
   defmacro __using__(table_name: table_name, jobs: jobs) do
     quote bind_quoted: [table_name: table_name, jobs: jobs] do

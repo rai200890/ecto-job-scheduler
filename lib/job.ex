@@ -1,5 +1,7 @@
 defmodule EctoJobScheduler.Job do
-  @moduledoc false
+  @moduledoc """
+    Defines jobs to be used with EctoJobScheduler.JobQueue and EctoJobScheduler.JobScheduler
+  """
   alias Ecto.Multi
   alias EctoJobScheduler.JobInfo
 
