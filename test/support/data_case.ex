@@ -1,4 +1,4 @@
-defmodule BankingPayment.DataCase do
+defmodule EctoJobScheduler.DataBase do
   @moduledoc """
   This module defines the setup for tests requiring
   access to the application's data layer.

@@ -1,6 +1,6 @@
 defmodule EctoJobScheduler.JobQueueTest do
   @moduledoc false
-  use BankingPayment.DataCase
+  use EctoJobScheduler.DataBase
 
   alias Ecto.Multi
 
