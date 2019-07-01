@@ -16,8 +16,15 @@ defmodule EctoJobScheduler.MixProject do
         "coveralls.post": :test,
         "coveralls.html": :test
       ],
+      description: description(),
       package: package(),
       source_url: "https://github.com/rai200890/ecto-job-scheduler"
+    ]
+  end
+
+  def application do
+    [
+      extra_applications: [:logger]
     ]
   end
 
@@ -26,15 +33,13 @@ defmodule EctoJobScheduler.MixProject do
 
   defp elixirc_paths(_), do: ["lib"]
 
-  def application do
-    [
-      extra_applications: [:logger]
-    ]
+  defp description do
+    "Helpers for scheduling Jobs defined in EctoJob"
   end
 
   defp package do
     [
-      files: ~w(lib .formatter.exs mix.exs README* LICENSE* CHANGELOG* VERSION*),
+      files: ~w(lib .formatter.exs mix.exs README* LICENSE* VERSION*),
       licenses: ["MIT"],
       links: %{"GitHub" => "https://github.com/rai200890/ecto-job-scheduler"}
     ]
