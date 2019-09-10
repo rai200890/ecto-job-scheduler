@@ -24,3 +24,7 @@ defmodule EctoJobScheduler.Test.TestJobScheduler do
     repo: EctoJobScheduler.Test.Repo,
     job_queue: EctoJobScheduler.Test.TestJobQueue
 end
+
+defmodule EctoJobScheduler.Test.TestJobParams do
+  defstruct [:some, :field]
+end

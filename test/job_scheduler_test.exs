@@ -4,8 +4,12 @@ defmodule EctoJobScheduler.JobSchedulerTest do
 
   alias Ecto.{Changeset, Multi}
   alias EctoJobScheduler.Logger.Context
-  alias EctoJobScheduler.Test.TestJob
-  alias EctoJobScheduler.Test.TestJobScheduler
+
+  alias EctoJobScheduler.Test.{
+    TestJob,
+    TestJobParams,
+    TestJobScheduler
+  }
 
   describe "schedule/3" do
     test "put context as an ecto job param" do
@@ -52,6 +56,26 @@ defmodule EctoJobScheduler.JobSchedulerTest do
              } = TestJobScheduler.schedule(Multi.new(), TestJob, params)
 
       assert expected_context == result_context
+    end
+
+    test "should schedule with a struct as param" do
+      assert %Multi{
+               operations: [
+                 test_job:
+                   {:changeset,
+                    %Changeset{
+                      action: :insert,
+                      valid?: true,
+                      data: %{
+                        params: %{"some" => "some", "field" => "field"}
+                      }
+                    }, []}
+               ]
+             } =
+               TestJobScheduler.schedule(Multi.new(), TestJob, %TestJobParams{
+                 some: "some",
+                 field: "field"
+               })
     end
   end
 end

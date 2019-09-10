@@ -12,6 +12,15 @@ defmodule EctoJobScheduler.JobScheduler do
           map(),
           nil | keyword() | map()
         ) :: any()
+  def schedule(%Multi{} = multi, job, %{__struct__: _job_module} = params, config) do
+    params =
+      params
+      |> Map.from_struct()
+      |> Map.new(fn {k, v} -> {Atom.to_string(k), v} end)
+
+    schedule(multi, job, params, config)
+  end
+
   def schedule(%Multi{} = multi, job, params, config) do
     context = Context.get() |> Enum.into(%{}) |> Map.drop([:params, "params"])
     params = Map.put_new(params, "context", context)
