@@ -26,5 +26,6 @@ defmodule EctoJobScheduler.Test.TestJobScheduler do
 end
 
 defmodule EctoJobScheduler.Test.TestJobParams do
+  @moduledoc false
   defstruct [:some, :field]
 end
