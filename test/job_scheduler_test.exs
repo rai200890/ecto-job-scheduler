@@ -25,12 +25,14 @@ defmodule EctoJobScheduler.JobSchedulerTest do
                     %Changeset{
                       action: :insert,
                       valid?: true,
-                      data: %{
-                        params: %{"context" => result_context, "data" => "any"}
-                      }
+                      data: job
                     }, []}
                ]
              } = TestJobScheduler.schedule(Multi.new(), TestJob, params)
+
+      assert %EctoJobScheduler.Test.TestJobQueue{
+               params: %{"context" => result_context, "data" => "any"}
+             } = job
 
       assert expected_context == result_context
     end
@@ -48,12 +50,14 @@ defmodule EctoJobScheduler.JobSchedulerTest do
                     %Changeset{
                       action: :insert,
                       valid?: true,
-                      data: %{
-                        params: %{"context" => result_context, "data" => "any"}
-                      }
+                      data: job
                     }, []}
                ]
              } = TestJobScheduler.schedule(Multi.new(), TestJob, params)
+
+      assert %EctoJobScheduler.Test.TestJobQueue{
+               params: %{"context" => result_context, "data" => "any"}
+             } = job
 
       assert expected_context == result_context
     end
@@ -76,6 +80,74 @@ defmodule EctoJobScheduler.JobSchedulerTest do
                  some: "some",
                  field: "field"
                })
+    end
+
+    test "should pass additional options to enqueue function" do
+      schedule = NaiveDateTime.utc_now()
+
+      assert %Multi{
+               operations: [
+                 test_job:
+                   {:changeset,
+                    %Changeset{
+                      action: :insert,
+                      valid?: true,
+                      data: job
+                    }, []}
+               ]
+             } =
+               TestJobScheduler.schedule(
+                 Multi.new(),
+                 TestJob,
+                 %TestJobParams{
+                   some: "some",
+                   field: "field"
+                 },
+                 schedule: schedule
+               )
+
+      assert %EctoJobScheduler.Test.TestJobQueue{
+               params: %{
+                 "field" => "field",
+                 "some" => "some",
+                 "type" => "TestJob"
+               },
+               schedule: ^schedule
+             } = job
+    end
+
+    test "should override config from job module" do
+      max_attempts = 4
+
+      assert %Multi{
+               operations: [
+                 test_job:
+                   {:changeset,
+                    %Changeset{
+                      action: :insert,
+                      valid?: true,
+                      data: job
+                    }, []}
+               ]
+             } =
+               TestJobScheduler.schedule(
+                 Multi.new(),
+                 TestJob,
+                 %TestJobParams{
+                   some: "some",
+                   field: "field"
+                 },
+                 max_attempts: max_attempts
+               )
+
+      assert %EctoJobScheduler.Test.TestJobQueue{
+               params: %{
+                 "field" => "field",
+                 "some" => "some",
+                 "type" => "TestJob"
+               },
+               max_attempts: ^max_attempts
+             } = job
     end
   end
 end

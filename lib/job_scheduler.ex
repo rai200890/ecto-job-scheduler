@@ -32,7 +32,7 @@ defmodule EctoJobScheduler.JobScheduler do
     |> config[:job_queue].enqueue(
       multi_name,
       Map.merge(%{"type" => type}, params),
-      max_attempts: job.config()[:max_attempts]
+      config
     )
   end
 
@@ -64,16 +64,20 @@ defmodule EctoJobScheduler.JobScheduler do
         unquote(config)
       end
 
-      def schedule(multi, job, params) do
-        JobScheduler.schedule(multi, job, params, config())
+      def schedule(multi, job, params, options \\ []) when is_map(params) do
+        JobScheduler.schedule(multi, job, params, Keyword.merge(config(), options))
       end
 
       def schedule(job, params) do
         JobScheduler.schedule(job, params, config())
       end
 
-      def run(job, params) do
+      def run(job, params) when is_map(params) do
         JobScheduler.run(job, params, config())
+      end
+
+      def run(job, params, options \\ []) when is_map(params) do
+        JobScheduler.run(job, params, Keyword.merge(config(), options))
       end
 
       def run(multi) do
