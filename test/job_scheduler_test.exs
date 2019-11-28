@@ -8,6 +8,7 @@ defmodule EctoJobScheduler.JobSchedulerTest do
   alias EctoJobScheduler.Test.{
     TestJob,
     TestJobParams,
+    TestJobQueue,
     TestJobScheduler
   }
 
@@ -30,7 +31,7 @@ defmodule EctoJobScheduler.JobSchedulerTest do
                ]
              } = TestJobScheduler.schedule(Multi.new(), TestJob, params)
 
-      assert %EctoJobScheduler.Test.TestJobQueue{
+      assert %TestJobQueue{
                params: %{"context" => result_context, "data" => "any"}
              } = job
 
@@ -55,7 +56,7 @@ defmodule EctoJobScheduler.JobSchedulerTest do
                ]
              } = TestJobScheduler.schedule(Multi.new(), TestJob, params)
 
-      assert %EctoJobScheduler.Test.TestJobQueue{
+      assert %TestJobQueue{
                params: %{"context" => result_context, "data" => "any"}
              } = job
 
@@ -106,7 +107,7 @@ defmodule EctoJobScheduler.JobSchedulerTest do
                  schedule: schedule
                )
 
-      assert %EctoJobScheduler.Test.TestJobQueue{
+      assert %TestJobQueue{
                params: %{
                  "field" => "field",
                  "some" => "some",
@@ -140,7 +141,7 @@ defmodule EctoJobScheduler.JobSchedulerTest do
                  max_attempts: max_attempts
                )
 
-      assert %EctoJobScheduler.Test.TestJobQueue{
+      assert %TestJobQueue{
                params: %{
                  "field" => "field",
                  "some" => "some",
