@@ -15,7 +15,8 @@ defmodule EctoJobScheduler.Test.TestJobQueue do
   @moduledoc false
   use EctoJobScheduler.JobQueue,
     table_name: "test_jobs",
-    jobs: [EctoJobScheduler.Test.TestJob]
+    jobs: [EctoJobScheduler.Test.TestJob],
+    max_attempts: 5
 end
 
 defmodule EctoJobScheduler.Test.TestJobScheduler do

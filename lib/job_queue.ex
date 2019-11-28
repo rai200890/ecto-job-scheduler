@@ -3,7 +3,10 @@ defmodule EctoJobScheduler.JobQueue do
    Defines EctoJob.JobQueue based on defined EctoJobScheduler.Job
   """
 
-  defmacro __using__(table_name: table_name, jobs: jobs) do
+  defmacro __using__(options \\ []) do
+    table_name = options[:table_name]
+    jobs = options[:jobs]
+
     quote bind_quoted: [table_name: table_name, jobs: jobs] do
       use EctoJob.JobQueue, table_name: table_name
       require Logger
