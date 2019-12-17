@@ -7,6 +7,6 @@ config :ecto_job_scheduler, EctoJobScheduler.Test.Repo,
 
 config :ecto_job_scheduler, ecto_repos: [EctoJobScheduler.Test.Repo]
 
-config :ecto_job_scheduler, EctoJobScheduler.Test.TestJob, max_attempts: "5"
+config :ecto_job_scheduler, EctoJobScheduler.Test.TestJob, max_attempts: "15"
 
 config :logger, level: :warn

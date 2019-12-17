@@ -32,7 +32,7 @@ defmodule EctoJobScheduler.JobScheduler do
     |> config[:job_queue].enqueue(
       multi_name,
       Map.merge(%{"type" => type}, params),
-      config
+      Keyword.merge(job.config(), config)
     )
   end
 
