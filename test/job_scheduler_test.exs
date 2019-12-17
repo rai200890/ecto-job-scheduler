@@ -117,6 +117,32 @@ defmodule EctoJobScheduler.JobSchedulerTest do
              } = job
     end
 
+    test "should load max_attempts from job config" do
+      params = %{"data" => "any"}
+      metadata = [some: :thing]
+      Context.put(metadata)
+      expected_context = metadata |> Enum.into(%{})
+
+      assert %Multi{
+               operations: [
+                 test_job:
+                   {:changeset,
+                    %Changeset{
+                      action: :insert,
+                      valid?: true,
+                      data: job
+                    }, []}
+               ]
+             } = TestJobScheduler.schedule(Multi.new(), TestJob, params)
+
+      assert %TestJobQueue{
+               params: %{"context" => result_context, "data" => "any"},
+               max_attempts: 15
+             } = job
+
+      assert expected_context == result_context
+    end
+
     test "should override config from job module" do
       max_attempts = 4
 

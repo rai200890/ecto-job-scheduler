@@ -34,7 +34,7 @@ defmodule EctoJobScheduler.Job do
 
         case job_info
              |> handle_job(params)
-             |> config()[:repo].transaction() do
+             |> unquote(options)[:repo].transaction() do
           {:ok, successful_changes} ->
             Logger.info("Successfully executed #{inspect(__MODULE__)}")
 
@@ -54,7 +54,10 @@ defmodule EctoJobScheduler.Job do
         config = unquote(options)
 
         max_attempts =
-          String.to_integer(Application.get_env(config[:otp_app], __MODULE__)[:max_attempts])
+          case Application.get_env(config[:otp_app], __MODULE__)[:max_attempts] do
+            max_attempts when is_integer(max_attempts) -> max_attempts
+            max_attempts -> String.to_integer(max_attempts)
+          end
 
         Keyword.put(config, :max_attempts, max_attempts)
       end
