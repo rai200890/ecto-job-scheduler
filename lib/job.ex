@@ -34,7 +34,7 @@ defmodule EctoJobScheduler.Job do
 
         case job_info
              |> handle_job(params)
-             |> unquote(options)[:repo].transaction() do
+             |> config()[:repo].transaction() do
           {:ok, successful_changes} ->
             Logger.info("Successfully executed #{inspect(__MODULE__)}")
 
