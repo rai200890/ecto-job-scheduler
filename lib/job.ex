@@ -2,10 +2,9 @@ defmodule EctoJobScheduler.Job do
   @moduledoc """
     Defines jobs to be used with EctoJobScheduler.JobQueue and EctoJobScheduler.JobScheduler
   """
-  alias Ecto.Multi
   alias EctoJobScheduler.JobInfo
 
-  @callback handle_job(%JobInfo{}, params :: map()) :: Multi.t()
+  @callback handle_job(%JobInfo{}, params :: map()) :: any()
 
   defmacro __using__(options \\ []) do
     quote do
@@ -32,9 +31,11 @@ defmodule EctoJobScheduler.Job do
 
         Logger.info("Attempting to run #{inspect(__MODULE__)} #{attempt} out of #{max_attempts}")
 
-        case job_info
-             |> handle_job(params)
-             |> config()[:repo].transaction() do
+        case run_job(job_info, params) do
+          :ok ->
+            Logger.info("Successfully executed #{inspect(__MODULE__)}")
+            :ok
+
           {:ok, successful_changes} ->
             Logger.info("Successfully executed #{inspect(__MODULE__)}")
 
@@ -47,6 +48,38 @@ defmodule EctoJobScheduler.Job do
             )
 
             {:error, multi_identifier, reason, successful_changes}
+
+          {:error, reason} ->
+            Logger.error("Unable to execute #{inspect(__MODULE__)}",
+              error: inspect(reason)
+            )
+
+            {:error, reason}
+        end
+      end
+
+      defp run_job(%JobInfo{multi: original_multi} = job_info, params) do
+        case handle_job(job_info, params) do
+          %Ecto.Multi{} = multi ->
+            config()[:repo].transaction(multi)
+
+          result ->
+            handle_job_result(original_multi, result)
+        end
+      end
+
+      defp handle_job_result(original_multi, result) do
+        case result do
+          :ok ->
+            config()[:repo].transaction(original_multi)
+            :ok
+
+          {:ok, result} ->
+            config()[:repo].transaction(original_multi)
+            {:ok, result}
+
+          other ->
+            other
         end
       end
 
