@@ -177,4 +177,7 @@ defmodule EctoJobScheduler.JobSchedulerTest do
              } = job
     end
   end
+
+  describe "run_many_jobs/2" do
+  end
 end
