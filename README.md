@@ -16,7 +16,7 @@ by adding `ecto_job_scheduler` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:ecto_job_scheduler, "~> 0.5.0"}
+    {:ecto_job_scheduler, "~> 0.6.0"}
   ]
 end
 ```
@@ -25,3 +25,71 @@ Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_do
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at [https://hexdocs.pm/ecto_job_scheduler](https://hexdocs.pm/ecto_job_scheduler).
 
+## Usage
+
+### Define job
+
+```elixir
+defmodule MyApplication.MyJob do
+  @moduledoc false
+  use EctoJobScheduler.Job,
+    repo: MyApplication.Repo,
+    otp_app: :my_application
+
+  def handle_job(%JobInfo{multi: _multi}, %{"input" => input}) do
+    case input do
+      :a -> :ok
+      :b -> {:ok, :gotta_go_fast}
+      other -> {:error, :xablau}
+    end
+  end
+end
+```
+
+### Define job queue
+
+```elixir
+defmodule MyApplication.MyJobQueue do
+  @moduledoc false
+  use EctoJobScheduler.JobQueue,
+    table_name: "test_jobs",
+    jobs: [
+      MyApplication.MyJob
+    ]
+end
+```
+
+### Define scheduler module for job queue
+
+```elixir
+defmodule MyApplication.MyJobScheduler do
+  @moduledoc false
+  use EctoJobScheduler.JobScheduler,
+  repo: MyApplication.Repo,
+  job_queue: MyApplication.MyJobQueue
+end
+```
+
+### Configuration
+
+```elixir
+config :my_application, MyApplication.MyJob, max_attempts: "15"
+```
+
+## Running and scheduling jobs
+
+### Enqueuing right away
+
+```elixir
+{:ok, job_queue} = MyJobScheduler.run(MyJob, %{"input" => "a"})
+{:ok, job_queue} = MyJobScheduler.run(MyJob, %{"input" => "a"}, schedule:  ~N[2022-10-03 12:00:00.000000]) # pass additional options
+
+```
+
+### Appending to Ecto.Multi
+
+```elixir
+  multi = Multi.run(:do_my_thing, fn _repo, _changes -> {:ok, :xablau} end)
+  multi = MyJobScheduler.schedule(multi, MyJob, %{"input" => "a"})
+  result = MyJobScheduler.run(multi)
+```
