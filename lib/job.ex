@@ -15,6 +15,8 @@ defmodule EctoJobScheduler.Job do
 
       @behaviour EctoJobScheduler.Job
 
+      @default_options [max_attempts: 5]
+
       def perform(multi, params) do
         %JobInfo{max_attempts: max_attempts, attempt: attempt} = job_info = JobInfo.new(multi)
 
@@ -84,15 +86,18 @@ defmodule EctoJobScheduler.Job do
       end
 
       def config do
-        config = unquote(options)
+        merged_options =
+          @default_options
+          |> Keyword.merge(unquote(options))
+          |> Keyword.merge(Application.get_env(unquote(options)[:otp_app], __MODULE__) || [])
 
         max_attempts =
-          case Application.get_env(config[:otp_app], __MODULE__)[:max_attempts] do
+          case merged_options[:max_attempts] do
             max_attempts when is_integer(max_attempts) -> max_attempts
             max_attempts -> String.to_integer(max_attempts)
           end
 
-        Keyword.put(config, :max_attempts, max_attempts)
+        Keyword.put(merged_options, :max_attempts, max_attempts)
       end
     end
   end
