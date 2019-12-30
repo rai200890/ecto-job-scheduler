@@ -18,6 +18,7 @@ defmodule EctoJobScheduler.Job do
       @default_options [max_attempts: 5]
 
       def perform(multi, params) do
+        Context.reset()
         %JobInfo{max_attempts: max_attempts, attempt: attempt} = job_info = JobInfo.new(multi)
 
         {context, params} = Map.pop(params, "context", %{})

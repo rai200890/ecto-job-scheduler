@@ -31,6 +31,9 @@ defmodule EctoJobScheduler.Logger.Context do
     |> Logger.metadata()
   end
 
+  @spec reset() :: :ok
+  def reset, do: Logger.reset_metadata()
+
   defp to_keyword_list(%{} = map) do
     Enum.map(map, fn
       {key, value} when is_atom(key) -> {key, value}
