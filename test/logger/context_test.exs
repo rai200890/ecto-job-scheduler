@@ -6,7 +6,7 @@ defmodule EctoJobScheduler.Logger.ContextTest do
 
   require Logger
 
-  describe "#get/0" do
+  describe "get/0" do
     test "returns Logger metadata if Logger metadata is empty" do
       assert Logger.metadata() == []
       assert Context.get() == []
@@ -20,7 +20,7 @@ defmodule EctoJobScheduler.Logger.ContextTest do
     end
   end
 
-  describe "#put/1" do
+  describe "put/1" do
     test "sets Logger metadata and context if context is a keyword list" do
       assert Logger.metadata() == []
       assert Context.get() == []
@@ -49,6 +49,16 @@ defmodule EctoJobScheduler.Logger.ContextTest do
 
       assert Keyword.equal?(Context.get(), some: :thing, other: "thing")
       assert Keyword.equal?(Logger.metadata(), some: :thing, other: "thing")
+    end
+  end
+
+  describe "reset/0" do
+    test "should clear all metadata" do
+      Context.put(some: :thing)
+      assert Keyword.equal?(Context.get(), some: :thing)
+
+      assert Context.reset() == :ok
+      assert Logger.metadata() == []
     end
   end
 end
