@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.1] - 2019-12-30
+
+### Fixed
+
+- Reset logger metadata on job perform/2
+
 ## [0.6.0] - 2019-12-25
 
 ### Added
