@@ -12,6 +12,7 @@ defmodule EctoJobScheduler.Job do
 
       alias EctoJobScheduler.JobInfo
       alias EctoJobScheduler.Logger.Context
+      alias EctoJobScheduler.SimpleSanitizer
 
       @behaviour EctoJobScheduler.Job
 
@@ -30,7 +31,10 @@ defmodule EctoJobScheduler.Job do
         }
 
         Context.put(context)
-        Context.put(job_context)
+
+        job_context
+        |> sanitizer.()
+        |> Context.put()
 
         Logger.info("Attempting to run #{inspect(__MODULE__)} #{attempt} out of #{max_attempts}")
 
@@ -84,6 +88,10 @@ defmodule EctoJobScheduler.Job do
           other ->
             other
         end
+      end
+
+      def sanitizer do
+        Application.get_env(:ecto_job_scheduler, :sanitizer, fn param -> param end)
       end
 
       def config do

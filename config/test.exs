@@ -12,8 +12,12 @@ config :ecto_job_scheduler, EctoJobScheduler.Test.TestJobError, max_attempts: "1
 config :ecto_job_scheduler, EctoJobScheduler.Test.TestJobNotMultiSuccessful, max_attempts: "15"
 config :ecto_job_scheduler, EctoJobScheduler.Test.TestJobNotMultiError, max_attempts: "15"
 
-config :ecto_job_scheduler, sanitizer: EctoJobScheduler.SimpleSanitizer
-config :ecto_job_scheduler, EctoJobScheduler.SimpleSanitizer,
-keys: ["xablau", "gokou", "cpf"]
+sanitize_fun = fn params ->
+  params
+  |> Map.delete("cpf")
+  |> Map.drop(["gokou", "xablau"])
+end
+
+config :ecto_job_scheduler, sanitizer: sanitize_fun
 
 config :logger, level: :warn
