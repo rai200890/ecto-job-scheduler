@@ -12,4 +12,8 @@ config :ecto_job_scheduler, EctoJobScheduler.Test.TestJobError, max_attempts: "1
 config :ecto_job_scheduler, EctoJobScheduler.Test.TestJobNotMultiSuccessful, max_attempts: "15"
 config :ecto_job_scheduler, EctoJobScheduler.Test.TestJobNotMultiError, max_attempts: "15"
 
+config :ecto_job_scheduler, sanitizer: EctoJobScheduler.SimpleSanitizer
+config :ecto_job_scheduler, EctoJobScheduler.SimpleSanitizer,
+keys: ["xablau", "gokou", "cpf"]
+
 config :logger, level: :warn
