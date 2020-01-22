@@ -33,7 +33,7 @@ defmodule EctoJobScheduler.Job do
         Context.put(context)
 
         job_context
-        |> sanitizer.()
+        |> sanitizer().()
         |> Context.put()
 
         Logger.info("Attempting to run #{inspect(__MODULE__)} #{attempt} out of #{max_attempts}")
