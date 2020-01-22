@@ -15,7 +15,7 @@ config :ecto_job_scheduler, EctoJobScheduler.Test.TestJobNotMultiError, max_atte
 sanitize_fun = fn params ->
   params
   |> Map.delete("cpf")
-  |> Map.drop(["gokou", "xablau"])
+  |> Map.drop(["little master", "xablau"])
 end
 
 config :ecto_job_scheduler, sanitizer: sanitize_fun

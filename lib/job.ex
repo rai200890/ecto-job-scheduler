@@ -25,16 +25,14 @@ defmodule EctoJobScheduler.Job do
         {context, params} = Map.pop(params, "context", %{})
 
         job_context = %{
-          "params" => params,
+          "params" => params |> sanitizer().(),
           "attempt" => attempt,
           "max_attempts" => max_attempts
         }
 
         Context.put(context)
 
-        job_context
-        |> sanitizer().()
-        |> Context.put()
+        Context.put(job_context)
 
         Logger.info("Attempting to run #{inspect(__MODULE__)} #{attempt} out of #{max_attempts}")
 
