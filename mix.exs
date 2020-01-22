@@ -51,7 +51,7 @@ defmodule EctoJobScheduler.MixProject do
 
   defp deps do
     [
-      {:ecto_job, "~> 2.1"},
+      {:ecto_job, "~> 3.0"},
       {:credo, "~> 1.1", only: [:dev, :test], runtime: false},
       {:excoveralls, "~> 0.10", only: :test},
       {:ex_doc, "~> 0.14", only: :dev, runtime: false},
