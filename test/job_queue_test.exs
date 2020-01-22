@@ -13,6 +13,9 @@ defmodule EctoJobScheduler.JobQueueTest do
     test "when job returns multi and return is successful, should delete job" do
       job_args = %{
         "type" => "TestJob",
+        "little master" => "Rai99",
+        "cpf" => "12345678910",
+        "xablau" => "jo",
         "context" => %{some: :thing}
       }
 
