@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.1] - 2020-01-23
+
+### Fixes
+
+- Allow MFA tuple to be given to sanitizer config
+
 ## [0.7.0] - 2020-01-22
 
 ###  Added
