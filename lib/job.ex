@@ -25,7 +25,7 @@ defmodule EctoJobScheduler.Job do
         {context, params} = Map.pop(params, "context", %{})
 
         job_context = %{
-          "params" => params |> sanitizer().(),
+          "params" => sanitize(params),
           "attempt" => attempt,
           "max_attempts" => max_attempts
         }
@@ -88,8 +88,15 @@ defmodule EctoJobScheduler.Job do
         end
       end
 
-      def sanitizer do
+      defp sanitizer do
         Application.get_env(:ecto_job_scheduler, :sanitizer, fn param -> param end)
+      end
+
+      defp sanitize(params) do
+        case sanitizer() do
+          fun when is_function(fun) -> fun.(params)
+          {mod, fun_name} -> apply(mod, fun_name, [params])
+        end
       end
 
       def config do
