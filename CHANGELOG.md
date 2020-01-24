@@ -6,11 +6,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.1] - 2020-01-23
+
+### Fixes
+
+- Allow MFA tuple to be given to sanitizer config
+
 ## [0.7.1] - 2020-01-23
 
 ### Fixes
 
 - Allow MFA tuple to be given to sanitizer config
+
+## [1.0.0] - 2020-01-22
+
+###  Added
+
+- Added support for ecto_job 3
 
 ## [0.7.0] - 2020-01-22
 
@@ -59,7 +71,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial version 
 
-[Unreleased]: https://github.com/rai200890/ecto-job-scheduler/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/rai200890/ecto-job-scheduler/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/rai200890/ecto-job-scheduler/compare/v1.0.0...v1.0.1
+[1.0.0]: https://github.com/rai200890/ecto-job-scheduler/compare/v0.7.0...v1.0.0
+[0.7.1]: https://github.com/rai200890/ecto-job-scheduler/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/rai200890/ecto-job-scheduler/compare/v0.6.1...v0.7.0
 [0.6.1]: https://github.com/rai200890/ecto-job-scheduler/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/rai200890/ecto-job-scheduler/compare/v0.5.0...v0.6.0
