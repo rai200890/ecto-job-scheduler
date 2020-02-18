@@ -39,7 +39,7 @@ defmodule EctoJobScheduler.Job do
         case run_job(job_info, params) do
           :ok ->
             Logger.info("Successfully executed #{inspect(__MODULE__)}")
-            :ok
+            {:ok, :ok}
 
           {:ok, successful_changes} ->
             Logger.info("Successfully executed #{inspect(__MODULE__)}")
