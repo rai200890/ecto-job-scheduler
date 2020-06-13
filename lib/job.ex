@@ -64,17 +64,14 @@ defmodule EctoJobScheduler.Job do
       end
 
       defp run_job(%JobInfo{multi: original_multi} = job_info, params) do
-        case handle_job(job_info, params) do
+        handle_job(job_info, params) |> handle_job_result(original_multi)
+      end
+
+      defp handle_job_result(result, original_multi) do
+        case result do
           %Ecto.Multi{} = multi ->
             config()[:repo].transaction(multi)
 
-          result ->
-            handle_job_result(original_multi, result)
-        end
-      end
-
-      defp handle_job_result(original_multi, result) do
-        case result do
           :ok ->
             config()[:repo].transaction(original_multi)
             :ok
