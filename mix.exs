@@ -22,6 +22,10 @@ defmodule EctoJobScheduler.MixProject do
       docs: [
         main: "readme",
         extras: ["README.md"]
+      ],
+      dialyzer: [
+        plt_file: {:no_warn, "priv/plts/dialyzer.plt"},
+        remove_defaults: [:unknown]
       ]
     ]
   end
@@ -55,7 +59,7 @@ defmodule EctoJobScheduler.MixProject do
       {:credo, "~> 1.1", only: [:dev, :test], runtime: false},
       {:excoveralls, "~> 0.10", only: :test},
       {:ex_doc, "~> 0.14", only: :dev, runtime: false},
-      {:dialyxir, "~> 0.5", only: [:dev], runtime: false}
+      {:dialyxir, "~> 1.0", only: [:dev], runtime: false}
     ]
   end
 end

@@ -23,3 +23,6 @@ erl_crash.dump
 ecto_job_scheduler-*.tar
 .elixir_ls/*
 
+# Dialyzer
+/priv/plts/*.plt
+/priv/plts/*.plt.hash
