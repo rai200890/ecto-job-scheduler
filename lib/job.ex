@@ -1,10 +1,58 @@
 defmodule EctoJobScheduler.Job do
   @moduledoc """
-    Defines jobs to be used with EctoJobScheduler.JobQueue and EctoJobScheduler.JobScheduler
+  Defines jobs to be used with EctoJobScheduler.JobQueue and EctoJobScheduler.JobScheduler.
   """
+
   alias EctoJobScheduler.JobInfo
 
+  require Logger
+
   @callback handle_job(%JobInfo{}, params :: map()) :: any()
+
+  def handle_job_result(result, original_multi, repo) do
+    case result do
+      %Ecto.Multi{} = multi ->
+        repo.transaction(multi)
+
+      :ok ->
+        repo.transaction(original_multi)
+        :ok
+
+      {:ok, result} ->
+        repo.transaction(original_multi)
+        {:ok, result}
+
+      other ->
+        other
+    end
+  end
+
+  def handle_job_result(:ok, job_name) do
+    Logger.info("Successfully executed #{job_name}")
+
+    {:ok, :ok}
+  end
+
+  def handle_job_result({:ok, successful_changes}, job_name) do
+    Logger.info("Successfully executed #{job_name}")
+
+    {:ok, successful_changes}
+  end
+
+  def handle_job_result({:error, multi_identifier, reason, successful_changes}, job_name) do
+    Logger.error("Unable to execute #{job_name}",
+      multi_identifier: multi_identifier,
+      error: inspect(reason)
+    )
+
+    {:error, multi_identifier, reason, successful_changes}
+  end
+
+  def handle_job_result({:error, reason}, job_name) do
+    Logger.error("Unable to execute #{job_name}", error: inspect(reason))
+
+    {:error, reason}
+  end
 
   defmacro __using__(options \\ []) do
     quote do
@@ -34,55 +82,17 @@ defmodule EctoJobScheduler.Job do
 
         Context.put(job_context)
 
-        Logger.info("Attempting to run #{inspect(__MODULE__)} #{attempt} out of #{max_attempts}")
+        job_name = inspect(__MODULE__)
 
-        case run_job(job_info, params) do
-          :ok ->
-            Logger.info("Successfully executed #{inspect(__MODULE__)}")
-            {:ok, :ok}
+        Logger.info("Attempting to run #{job_name} #{attempt} out of #{max_attempts}")
 
-          {:ok, successful_changes} ->
-            Logger.info("Successfully executed #{inspect(__MODULE__)}")
-
-            {:ok, successful_changes}
-
-          {:error, multi_identifier, reason, successful_changes} ->
-            Logger.error("Unable to execute #{inspect(__MODULE__)}",
-              multi_identifier: multi_identifier,
-              error: inspect(reason)
-            )
-
-            {:error, multi_identifier, reason, successful_changes}
-
-          {:error, reason} ->
-            Logger.error("Unable to execute #{inspect(__MODULE__)}",
-              error: inspect(reason)
-            )
-
-            {:error, reason}
-        end
+        job_info |> run_job(params) |> EctoJobScheduler.Job.handle_job_result(job_name)
       end
 
       defp run_job(%JobInfo{multi: original_multi} = job_info, params) do
-        handle_job(job_info, params) |> handle_job_result(original_multi)
-      end
-
-      defp handle_job_result(result, original_multi) do
-        case result do
-          %Ecto.Multi{} = multi ->
-            config()[:repo].transaction(multi)
-
-          :ok ->
-            config()[:repo].transaction(original_multi)
-            :ok
-
-          {:ok, result} ->
-            config()[:repo].transaction(original_multi)
-            {:ok, result}
-
-          other ->
-            other
-        end
+        job_info
+        |> handle_job(params)
+        |> EctoJobScheduler.Job.handle_job_result(original_multi, config()[:repo])
       end
 
       defp sanitizer do
