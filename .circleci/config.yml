@@ -31,6 +31,7 @@ jobs:
       - run: mix credo --strict
       - run: mix do ecto.create, ecto.migrate
       - run: mix coveralls.html
+      - run: MIX_ENV=dev mix dialyzer --plt
       - store_artifacts:
           path: cover/
    
