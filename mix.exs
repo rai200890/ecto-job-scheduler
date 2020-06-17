@@ -57,12 +57,12 @@ defmodule EctoJobScheduler.MixProject do
     [
       {:ecto_job, "~> 3.0"},
       {:ecto_sql, "~> 3.4"},
-      {:credo, "~> 1.1", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.4", only: [:dev, :test], runtime: false},
       {:excoveralls, "~> 0.10", only: :test},
       {:ex_doc, "~> 0.14", only: :dev, runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
       {:new_relic_agent, "~> 1.19", optional: true},
-      {:mox, "~> 0.5", only: [:test], runtime: false}
+      {:mox, "~> 0.5", only: [:dev, :test], runtime: false}
     ]
   end
 end

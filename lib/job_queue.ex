@@ -3,6 +3,8 @@ defmodule EctoJobScheduler.JobQueue do
    Defines EctoJob.JobQueue based on defined EctoJobScheduler.Job
   """
 
+  # credo:disable-for-this-file Credo.Check.Refactor.Nesting
+
   defmacro __using__(options \\ []) do
     table_name = options[:table_name]
     jobs = options[:jobs]
@@ -14,6 +16,7 @@ defmodule EctoJobScheduler.JobQueue do
       require Logger
 
       alias Ecto.Multi
+      alias EctoJobScheduler.NewRelic.JobInstrumenter
 
       Enum.each(jobs, fn job ->
         type = job |> Atom.to_string() |> String.split(".") |> List.last()
@@ -29,7 +32,7 @@ defmodule EctoJobScheduler.JobQueue do
                   Logger.metadata(request_id: request_id)
               end
 
-              EctoJobScheduler.NewRelic.JobInstrumenter.transaction("job/#{unquote(type)}", fn ->
+              JobInstrumenter.transaction("job/#{unquote(type)}", fn ->
                 apply(unquote(job), :perform, [multi, job_params])
               end)
             end
