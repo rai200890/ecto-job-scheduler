@@ -6,7 +6,7 @@
 
 Helpers for scheduling Jobs defined in [EctoJob](https://github.com/mbuhot/ecto_job)
 
-Thanks [joaothallis](https://github.com/joaothallis), [ramondelemos](https://github.com/ramondelemos), [victorprs](https://github.com/victorprs) 
+Thanks [joaothallis](https://github.com/joaothallis), [ramondelemos](https://github.com/ramondelemos), [victorprs](https://github.com/victorprs)
 
 ## Installation
 
@@ -59,6 +59,20 @@ defmodule MyApplication.MyJobQueue do
 end
 ```
 
+if you want new_relic instrumentation in your jobs, add new_relic_agent to the deps and
+
+```elixir
+defmodule MyApplication.MyJobQueue do
+  @moduledoc false
+  use EctoJobScheduler.JobQueue,
+    table_name: "test_jobs",
+    jobs: [
+      MyApplication.MyJob
+    ],
+    instrumenter: :new_relic
+end
+```
+
 ### Define scheduler module for job queue
 
 ```elixir
@@ -92,4 +106,4 @@ config :my_application, MyApplication.MyJob, max_attempts: "15"
   multi = Multi.run(:do_my_thing, fn _repo, _changes -> {:ok, :xablau} end)
   multi = MyJobScheduler.schedule(multi, MyJob, %{"input" => "a"})
   result = MyJobScheduler.run(multi)
-```
+``
