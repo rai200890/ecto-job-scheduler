@@ -59,7 +59,7 @@ defmodule MyApplication.MyJobQueue do
 end
 ```
 
-if you want new_relic instrumentation in your jobs, add new_relic_agent to the deps and
+If you want new_relic instrumentation in your jobs, add new_relic_agent to the deps and
 
 ```elixir
 defmodule MyApplication.MyJobQueue do
@@ -106,4 +106,4 @@ config :my_application, MyApplication.MyJob, max_attempts: "15"
   multi = Multi.run(:do_my_thing, fn _repo, _changes -> {:ok, :xablau} end)
   multi = MyJobScheduler.schedule(multi, MyJob, %{"input" => "a"})
   result = MyJobScheduler.run(multi)
-``
+```
