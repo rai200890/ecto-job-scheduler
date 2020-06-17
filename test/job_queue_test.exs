@@ -101,7 +101,7 @@ defmodule EctoJobScheduler.JobQueueTest do
       end
 
       test "#{job_queue} when job doesn't return multi and fails, should update job attempt" do
-         if unquote(job_queue) == TestJobQueueNewRelic do
+        if unquote(job_queue) == TestJobQueueNewRelic do
           Mox.expect(ReporterMock, :fail, fn _, _ -> :ok end)
         end
 
