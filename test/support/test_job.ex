@@ -53,6 +53,20 @@ defmodule EctoJobScheduler.Test.TestJobQueue do
     max_attempts: "5"
 end
 
+defmodule EctoJobScheduler.Test.TestJobQueueNewRelic do
+  @moduledoc false
+  use EctoJobScheduler.JobQueue,
+    table_name: "test_jobs",
+    jobs: [
+      EctoJobScheduler.Test.TestJob,
+      EctoJobScheduler.Test.TestJobError,
+      EctoJobScheduler.Test.TestJobNotMultiSuccessful,
+      EctoJobScheduler.Test.TestJobNotMultiError
+    ],
+    max_attempts: "5",
+    instrumenter: :new_relic
+end
+
 defmodule EctoJobScheduler.Test.TestJobScheduler do
   @moduledoc false
   use EctoJobScheduler.JobScheduler,

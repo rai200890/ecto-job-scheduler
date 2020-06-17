@@ -1,26 +1,25 @@
-version: 2
+version: 2.1
+
 jobs:
   build:
     docker:
       - image: elixir:1.8.2-alpine
-        name: app  
+        name: app
         environment:
-            MIX_ENV: test
-            DATABASE_USER: user
-            DATABASE_PASSWORD: pass
-            DATABASE_PORT: 5432
-            DATABASE_HOST: db
-            DATABASE_NAME: ecto_job_scheduler_test
-            DATABASE_POOL_SIZE: 5
-        depends_on:
-          - db
+          MIX_ENV: test
+          DATABASE_USER: user
+          DATABASE_PASSWORD: pass
+          DATABASE_PORT: "5432"
+          DATABASE_HOST: db
+          DATABASE_NAME: ecto_job_scheduler_test
+          DATABASE_POOL_SIZE: "5"
       - image: postgres:9.6-alpine
         name: db
         environment:
           POSTGRES_USER: user
           POSTGRES_PASSWORD: pass
           POSTGRES_DB: ecto_job_scheduler_test
-   
+
     working_directory: ~/app
 
     steps:
@@ -29,20 +28,31 @@ jobs:
       - run: mix do deps.get, compile --warnings-as-errors
       - run: mix format --check-formatted
       - run: mix credo --strict
+      - run: sh -c 'while true; do nc -z db 5432; if [[ "$?" == 0 ]]; then break; fi; sleep 1; done'
       - run: mix do ecto.create, ecto.migrate
       - run: mix coveralls.html
+      - restore_cache:
+          keys:
+            - plt-cache-{{ checksum "mix.lock" }}-{{ .Branch }}
+            - plt-cache-{{ checksum "mix.lock" }}
       - run: MIX_ENV=dev mix dialyzer --plt
+      - save_cache:
+          key: plt-cache-{{ checksum "mix.lock" }}-{{ .Branch }}
+          paths:
+            - _dialyzer/ecto-job-scheduler.plt
+      - save_cache:
+          key: plt-cache-{{ checksum "mix.lock" }}
+          paths:
+            - _dialyzer/ecto-job-scheduler.plt
+      - run: MIX_ENV=dev mix dialyzer --format short
       - store_artifacts:
           path: cover/
-   
- 
+
 workflows:
   version: 2
   build-and-deploy:
     jobs:
       - build:
           filters:
-            branches:
-              only: /.*/
             tags:
               only: /.*/

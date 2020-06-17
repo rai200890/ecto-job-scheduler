@@ -24,7 +24,7 @@ defmodule EctoJobScheduler.MixProject do
         extras: ["README.md"]
       ],
       dialyzer: [
-        plt_file: {:no_warn, "priv/plts/dialyzer.plt"},
+        plt_file: {:no_warn, "_dialyzer/ecto-job-scheduler.plt"},
         remove_defaults: [:unknown]
       ]
     ]
@@ -56,10 +56,13 @@ defmodule EctoJobScheduler.MixProject do
   defp deps do
     [
       {:ecto_job, "~> 3.0"},
-      {:credo, "~> 1.1", only: [:dev, :test], runtime: false},
+      {:ecto_sql, "~> 3.4"},
+      {:credo, "~> 1.4", only: [:dev, :test], runtime: false},
       {:excoveralls, "~> 0.10", only: :test},
       {:ex_doc, "~> 0.14", only: :dev, runtime: false},
-      {:dialyxir, "~> 1.0", only: [:dev], runtime: false}
+      {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
+      {:new_relic_agent, "~> 1.19", optional: true},
+      {:mox, "~> 0.5", only: [:dev, :test], runtime: false}
     ]
   end
 end
