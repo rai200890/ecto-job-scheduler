@@ -24,7 +24,7 @@ defmodule EctoJobScheduler.MixProject do
         extras: ["README.md"]
       ],
       dialyzer: [
-        plt_file: {:no_warn, "priv/plts/dialyzer.plt"},
+        plt_file: {:no_warn, "_dialyzer/ecto-job-scheduler.plt"},
         remove_defaults: [:unknown]
       ]
     ]
