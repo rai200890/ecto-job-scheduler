@@ -28,8 +28,8 @@ jobs:
       - run: mix do deps.get, compile --warnings-as-errors
       - run: mix format --check-formatted
       - run: mix credo --strict
-      - run: mix do ecto.create, ecto.migrate
       - run: sh -c 'while true; do nc -z db 5432; if [[ "$?" == 0 ]]; then break; fi; sleep 1; done'
+      - run: mix do ecto.create, ecto.migrate
       - run: mix coveralls.html
       - restore_cache:
           keys:
