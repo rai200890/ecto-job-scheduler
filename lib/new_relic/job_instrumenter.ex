@@ -72,8 +72,4 @@ defmodule EctoJobScheduler.NewRelic.JobInstrumenter do
     do:
       Application.get_env(:ecto_job_scheduler, __MODULE__)[:reporter] ||
         NewRelic.Transaction.Reporter
-
-      # FIXME: remove
-  defp transaction,
-    do: Application.get_env(:ecto_job_scheduler, __MODULE__)[:transaction] || NewRelic.Transaction
 end

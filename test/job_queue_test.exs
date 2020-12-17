@@ -17,8 +17,6 @@ defmodule EctoJobScheduler.JobQueueTest do
           ReporterMock
           |> Mox.expect(:start, fn -> :ok end)
           |> Mox.expect(:add_attributes, fn _ -> :ok end)
-
-          Mox.expect(TransactionMock, :stop_transaction, fn -> :ok end)
         end
 
         %{}
