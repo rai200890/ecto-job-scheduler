@@ -45,7 +45,7 @@ defmodule EctoJobScheduler.NewRelic.JobInstrumenter do
   end
 
   defp start do
-    reporter().start()
+    reporter().start_transaction(:other)
   end
 
   defp add_attributes(attributes) do
@@ -61,7 +61,7 @@ defmodule EctoJobScheduler.NewRelic.JobInstrumenter do
   end
 
   defp complete do
-    transaction().stop_transaction()
+    transaction().stop_transaction(:other)
   end
 
   defp get_request_id do
