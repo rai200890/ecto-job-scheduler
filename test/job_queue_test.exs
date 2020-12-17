@@ -15,7 +15,7 @@ defmodule EctoJobScheduler.JobQueueTest do
       setup do
         if unquote(job_queue) == TestJobQueueNewRelic do
           ReporterMock
-          |> Mox.expect(:start, fn -> :ok end)
+          |> Mox.expect(:start_transaction, fn _ -> :ok end)
           |> Mox.expect(:add_attributes, fn _ -> :ok end)
         end
 
@@ -34,6 +34,9 @@ defmodule EctoJobScheduler.JobQueueTest do
         EctoJobHelpers.build_initial_multi(Repo, unquote(job_queue), job_args)
 
         job = Repo.one(unquote(job_queue))
+
+        Mox.expect(ReporterMock, :stop_transaction, fn _ -> :ok end)
+        Mox.expect(ReporterMock, :fail, fn _ -> :ok end)
 
         assert {:ok, %{test_job: :xablau}} =
                  EctoJobHelpers.dispatch_job(Repo, unquote(job_queue), job)
@@ -57,6 +60,10 @@ defmodule EctoJobScheduler.JobQueueTest do
         EctoJobHelpers.build_initial_multi(Repo, unquote(job_queue), job_args)
 
         job = Repo.one(unquote(job_queue))
+
+        Mox.expect(ReporterMock, :fail, fn _ -> :ok end)
+
+        Mox.expect(ReporterMock, :stop_transaction, fn _ -> :ok end)
 
         assert {:error, :test_job, :xablau, %{}} =
                  EctoJobHelpers.dispatch_job(Repo, unquote(job_queue), job)
@@ -86,6 +93,9 @@ defmodule EctoJobScheduler.JobQueueTest do
 
         job = Repo.one(unquote(job_queue))
 
+        Mox.expect(ReporterMock, :stop_transaction, fn _ -> :ok end)
+        Mox.expect(ReporterMock, :fail, fn _ -> :ok end)
+
         assert {:ok, :xablau} == EctoJobHelpers.dispatch_job(Repo, unquote(job_queue), job)
 
         assert Repo.all(unquote(job_queue)) == []
@@ -100,8 +110,11 @@ defmodule EctoJobScheduler.JobQueueTest do
 
       test "#{job_queue} when job doesn't return multi and fails, should update job attempt" do
         if unquote(job_queue) == TestJobQueueNewRelic do
-          Mox.expect(ReporterMock, :fail, fn _, _ -> :ok end)
+          Mox.expect(ReporterMock, :fail, fn _ -> :ok end)
         end
+
+        Mox.expect(ReporterMock, :stop_transaction, fn _ -> :ok end)
+        Mox.expect(ReporterMock, :fail, fn _ -> :ok end)
 
         job_args = %{
           "type" => "TestJobNotMultiError",
