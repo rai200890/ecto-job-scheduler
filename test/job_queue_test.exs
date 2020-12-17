@@ -19,6 +19,7 @@ defmodule EctoJobScheduler.JobQueueTest do
           |> Mox.expect(:add_attributes, fn _ -> :ok end)
         end
 
+        Mox.expect(ReporterMock, :stop_transaction, fn _ -> :ok end)
         %{}
       end
 
@@ -35,7 +36,6 @@ defmodule EctoJobScheduler.JobQueueTest do
 
         job = Repo.one(unquote(job_queue))
 
-        Mox.expect(ReporterMock, :stop_transaction, fn _ -> :ok end)
         Mox.expect(ReporterMock, :fail, fn _ -> :ok end)
 
         assert {:ok, %{test_job: :xablau}} =
@@ -62,8 +62,6 @@ defmodule EctoJobScheduler.JobQueueTest do
         job = Repo.one(unquote(job_queue))
 
         Mox.expect(ReporterMock, :fail, fn _ -> :ok end)
-
-        Mox.expect(ReporterMock, :stop_transaction, fn _ -> :ok end)
 
         assert {:error, :test_job, :xablau, %{}} =
                  EctoJobHelpers.dispatch_job(Repo, unquote(job_queue), job)
@@ -93,7 +91,6 @@ defmodule EctoJobScheduler.JobQueueTest do
 
         job = Repo.one(unquote(job_queue))
 
-        Mox.expect(ReporterMock, :stop_transaction, fn _ -> :ok end)
         Mox.expect(ReporterMock, :fail, fn _ -> :ok end)
 
         assert {:ok, :xablau} == EctoJobHelpers.dispatch_job(Repo, unquote(job_queue), job)
@@ -113,7 +110,6 @@ defmodule EctoJobScheduler.JobQueueTest do
           Mox.expect(ReporterMock, :fail, fn _ -> :ok end)
         end
 
-        Mox.expect(ReporterMock, :stop_transaction, fn _ -> :ok end)
         Mox.expect(ReporterMock, :fail, fn _ -> :ok end)
 
         job_args = %{
