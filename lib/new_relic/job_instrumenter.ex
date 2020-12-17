@@ -53,7 +53,7 @@ defmodule EctoJobScheduler.NewRelic.JobInstrumenter do
   end
 
   defp fail(kind, reason, stack) do
-    reporter().fail(self(), %{
+    reporter().fail(%{
       kind: kind,
       reason: reason,
       stack: stack
