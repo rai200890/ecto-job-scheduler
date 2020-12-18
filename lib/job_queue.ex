@@ -1,6 +1,6 @@
 defmodule EctoJobScheduler.JobQueue do
   @moduledoc """
-   Defines EctoJob.JobQueue based on defined EctoJobScheduler.Job
+  Defines EctoJob.JobQueue based on defined EctoJobScheduler.Job
   """
 
   # credo:disable-for-this-file Credo.Check.Refactor.Nesting

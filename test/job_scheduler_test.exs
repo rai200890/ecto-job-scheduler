@@ -1,6 +1,6 @@
 defmodule EctoJobScheduler.JobSchedulerTest do
   @moduledoc false
-  use ExUnit.Case
+  use ExUnit.Case, async: true
 
   alias Ecto.{Changeset, Multi}
   alias EctoJobScheduler.Logger.Context

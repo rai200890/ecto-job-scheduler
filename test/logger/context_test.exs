@@ -1,5 +1,5 @@
 defmodule EctoJobScheduler.Logger.ContextTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   alias EctoJobScheduler.Logger.Context
 
   doctest Context
