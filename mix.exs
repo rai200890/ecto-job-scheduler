@@ -61,7 +61,7 @@ defmodule EctoJobScheduler.MixProject do
       {:excoveralls, "~> 0.10", only: :test},
       {:ex_doc, "~> 0.14", only: :dev, runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
-      {:new_relic_agent, "~> 1.19", optional: true},
+      {:new_relic_agent, "== 1.18.5", optional: true},
       {:mox, "~> 0.5", only: [:dev, :test], runtime: false}
     ]
   end
