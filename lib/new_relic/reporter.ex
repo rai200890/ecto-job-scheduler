@@ -1,11 +1,11 @@
 defmodule EctoJobScheduler.NewRelic.Reporter do
   @moduledoc false
 
-  @callback start_transaction(:other) :: term()
+  @callback start() :: term()
 
-  @callback stop_transaction(:other) :: term()
+  @callback fail(pid(), map()) :: term()
 
   @callback add_attributes(keyword()) :: term()
 
-  @callback fail(map()) :: term()
+  @callback complete(pid(), atom()) :: term()
 end
