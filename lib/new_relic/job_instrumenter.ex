@@ -44,16 +44,14 @@ defmodule EctoJobScheduler.NewRelic.JobInstrumenter do
       reraise exception, __STACKTRACE__
   end
 
-  defp start do
-    reporter().start_transaction(:other)
-  end
+  defp start, do: reporter().start()
 
   defp add_attributes(attributes) do
     reporter().add_attributes(attributes)
   end
 
   defp fail(kind, reason, stack) do
-    reporter().fail(%{
+    reporter().fail(self(), %{
       kind: kind,
       reason: reason,
       stack: stack
@@ -61,12 +59,17 @@ defmodule EctoJobScheduler.NewRelic.JobInstrumenter do
   end
 
   defp complete do
-    reporter().stop_transaction(:other)
+    transaction().stop_transaction()
   end
 
   defp get_request_id do
     Keyword.get(Logger.metadata(), :request_id)
   end
+
+  defp transaction,
+    do:
+      Application.get_env(:ecto_job_scheduler, __MODULE__)[:transaction] ||
+        NewRelic.Transaction
 
   defp reporter,
     do:

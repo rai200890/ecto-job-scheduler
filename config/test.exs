@@ -22,4 +22,6 @@ config :ecto_job_scheduler, sanitizer: sanitize_fun
 
 config :logger, level: :warn
 
-config :ecto_job_scheduler, EctoJobScheduler.NewRelic.JobInstrumenter, reporter: ReporterMock
+config :ecto_job_scheduler, EctoJobScheduler.NewRelic.JobInstrumenter,
+  reporter: ReporterMock,
+  transaction: TransactionMock
