@@ -44,9 +44,7 @@ defmodule EctoJobScheduler.NewRelic.JobInstrumenter do
       reraise exception, __STACKTRACE__
   end
 
-  defp start do
-    reporter().start()
-  end
+  defp start, do: reporter().start()
 
   defp add_attributes(attributes) do
     reporter().add_attributes(attributes)
