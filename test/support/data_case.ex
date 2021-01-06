@@ -1,4 +1,4 @@
-defmodule EctoJobScheduler.DataBase do
+defmodule EctoJobScheduler.DataCase do
   @moduledoc false
 
   use ExUnit.CaseTemplate

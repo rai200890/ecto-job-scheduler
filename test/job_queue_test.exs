@@ -1,6 +1,8 @@
 defmodule EctoJobScheduler.JobQueueTest do
   @moduledoc false
-  use EctoJobScheduler.DataBase
+  use EctoJobScheduler.DataCase, async: true
+
+  import Mox
 
   alias EctoJobScheduler.Logger.Context
   alias EctoJobScheduler.Test.EctoJobHelpers
@@ -10,20 +12,10 @@ defmodule EctoJobScheduler.JobQueueTest do
 
   @moduletag :capture_log
 
+  setup :verify_on_exit!
+
   describe "perform/3" do
     Enum.each([TestJobQueue, TestJobQueueNewRelic], fn job_queue ->
-      setup do
-        if unquote(job_queue) == TestJobQueueNewRelic do
-          ReporterMock
-          |> Mox.expect(:start, fn -> :ok end)
-          |> Mox.expect(:add_attributes, fn _ -> :ok end)
-
-          Mox.expect(TransactionMock, :stop_transaction, fn -> :ok end)
-        end
-
-        %{}
-      end
-
       test "#{job_queue} when job returns multi and return is successful, should delete job" do
         job_args = %{
           "type" => "TestJob",
@@ -35,7 +27,10 @@ defmodule EctoJobScheduler.JobQueueTest do
 
         EctoJobHelpers.build_initial_multi(Repo, unquote(job_queue), job_args)
 
-        job = Repo.one(unquote(job_queue))
+        job_queue = unquote(job_queue)
+        job = Repo.one(job_queue)
+
+        mock_report(job_queue)
 
         assert {:ok, %{test_job: :xablau}} =
                  EctoJobHelpers.dispatch_job(Repo, unquote(job_queue), job)
@@ -58,7 +53,10 @@ defmodule EctoJobScheduler.JobQueueTest do
 
         EctoJobHelpers.build_initial_multi(Repo, unquote(job_queue), job_args)
 
+        job_queue = unquote(job_queue)
         job = Repo.one(unquote(job_queue))
+
+        mock_report(job_queue)
 
         assert {:error, :test_job, :xablau, %{}} =
                  EctoJobHelpers.dispatch_job(Repo, unquote(job_queue), job)
@@ -86,7 +84,10 @@ defmodule EctoJobScheduler.JobQueueTest do
 
         EctoJobHelpers.build_initial_multi(Repo, unquote(job_queue), job_args)
 
+        job_queue = unquote(job_queue)
         job = Repo.one(unquote(job_queue))
+
+        mock_report(job_queue)
 
         assert {:ok, :xablau} == EctoJobHelpers.dispatch_job(Repo, unquote(job_queue), job)
 
@@ -102,7 +103,6 @@ defmodule EctoJobScheduler.JobQueueTest do
 
       test "#{job_queue} when job doesn't return multi and fails, should update job attempt" do
         if unquote(job_queue) == TestJobQueueNewRelic do
-          Mox.expect(ReporterMock, :fail, fn _, _ -> :ok end)
         end
 
         job_args = %{
@@ -112,14 +112,21 @@ defmodule EctoJobScheduler.JobQueueTest do
 
         EctoJobHelpers.build_initial_multi(Repo, unquote(job_queue), job_args)
 
+        job_queue = unquote(job_queue)
         job = Repo.one(unquote(job_queue))
 
-        assert {:error, :sad_keanu} == EctoJobHelpers.dispatch_job(Repo, unquote(job_queue), job)
+        mock_report_fail(job_queue)
+
+        assert {:error, :sad_keanu} ==
+                 EctoJobHelpers.dispatch_job(Repo, unquote(job_queue), job)
 
         assert [
                  %unquote(job_queue){
                    attempt: 1,
-                   params: %{"context" => %{"some" => "thing"}, "type" => "TestJobNotMultiError"}
+                   params: %{
+                     "context" => %{"some" => "thing"},
+                     "type" => "TestJobNotMultiError"
+                   }
                  }
                ] = Repo.all(unquote(job_queue))
 
@@ -132,4 +139,19 @@ defmodule EctoJobScheduler.JobQueueTest do
       end
     end)
   end
+
+  defp mock_report(TestJobQueueNewRelic) do
+    ReporterMock
+    |> expect(:start_transaction, fn _ -> :ok end)
+    |> expect(:add_attributes, fn _ -> :ok end)
+    |> expect(:stop_transaction, fn _ -> :ok end)
+  end
+
+  defp mock_report(_job_queue), do: nil
+
+  defp mock_report_fail(TestJobQueueNewRelic) do
+    TestJobQueueNewRelic |> mock_report() |> expect(:fail, fn _ -> :ok end)
+  end
+
+  defp mock_report_fail(_job_queue), do: nil
 end

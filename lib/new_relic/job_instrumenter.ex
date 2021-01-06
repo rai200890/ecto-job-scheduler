@@ -45,7 +45,7 @@ defmodule EctoJobScheduler.NewRelic.JobInstrumenter do
   end
 
   defp start do
-    reporter().start()
+    reporter().start_transaction(:other)
   end
 
   defp add_attributes(attributes) do
@@ -53,7 +53,7 @@ defmodule EctoJobScheduler.NewRelic.JobInstrumenter do
   end
 
   defp fail(kind, reason, stack) do
-    reporter().fail(self(), %{
+    reporter().fail(%{
       kind: kind,
       reason: reason,
       stack: stack
@@ -61,7 +61,7 @@ defmodule EctoJobScheduler.NewRelic.JobInstrumenter do
   end
 
   defp complete do
-    transaction().stop_transaction()
+    reporter().stop_transaction(:other)
   end
 
   defp get_request_id do
@@ -72,7 +72,4 @@ defmodule EctoJobScheduler.NewRelic.JobInstrumenter do
     do:
       Application.get_env(:ecto_job_scheduler, __MODULE__)[:reporter] ||
         NewRelic.Transaction.Reporter
-
-  defp transaction,
-    do: Application.get_env(:ecto_job_scheduler, __MODULE__)[:transaction] || NewRelic.Transaction
 end
