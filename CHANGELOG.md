@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - New relic error reporter
 
+### Fixes
+
+- Fix current VERSION 
+
 ## [1.2.1]
 
 ### Changed
