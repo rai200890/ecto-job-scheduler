@@ -17,6 +17,16 @@ defmodule EctoJobScheduler.JobQueueTest do
   describe "perform/3" do
     Enum.each([TestJobQueue, TestJobQueueNewRelic], fn job_queue ->
       test "#{job_queue} when job returns multi and return is successful, should delete job" do
+        :ok =
+          :telemetry.attach(
+            "#{unquote(job_queue)}-job-executed-handler",
+            [:ecto_job_scheduler, :job, :executed],
+            fn event, measurements, metadata, config ->
+              send(self(), {event, measurements, metadata, config})
+            end,
+            nil
+          )
+
         job_args = %{
           "type" => "TestJob",
           "little master" => "Rai99",
@@ -43,6 +53,9 @@ defmodule EctoJobScheduler.JobQueueTest do
                  attempt: 1,
                  some: "thing"
                ] = Context.get()
+
+        assert_received {[:ecto_job_scheduler, :job, :executed], _measurements, _metadata,
+                         _config}
       end
 
       test "#{job_queue} when job returns multi and return fails, should update job attempt" do
