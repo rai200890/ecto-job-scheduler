@@ -40,6 +40,17 @@ defmodule EctoJobScheduler.Test.TestJobNotMultiError do
   end
 end
 
+defmodule EctoJobScheduler.Test.TestJobException do
+  @moduledoc false
+  use EctoJobScheduler.Job,
+    repo: EctoJobScheduler.Test.Repo,
+    otp_app: :ecto_job_scheduler
+
+  def handle_job(%JobInfo{multi: _multi}, _params) do
+    raise "Xablau!"
+  end
+end
+
 defmodule EctoJobScheduler.Test.TestJobQueue do
   @moduledoc false
   use EctoJobScheduler.JobQueue,
@@ -48,7 +59,8 @@ defmodule EctoJobScheduler.Test.TestJobQueue do
       EctoJobScheduler.Test.TestJob,
       EctoJobScheduler.Test.TestJobError,
       EctoJobScheduler.Test.TestJobNotMultiSuccessful,
-      EctoJobScheduler.Test.TestJobNotMultiError
+      EctoJobScheduler.Test.TestJobNotMultiError,
+      EctoJobScheduler.Test.TestJobException
     ],
     max_attempts: "5"
 end
@@ -61,7 +73,8 @@ defmodule EctoJobScheduler.Test.TestJobQueueNewRelic do
       EctoJobScheduler.Test.TestJob,
       EctoJobScheduler.Test.TestJobError,
       EctoJobScheduler.Test.TestJobNotMultiSuccessful,
-      EctoJobScheduler.Test.TestJobNotMultiError
+      EctoJobScheduler.Test.TestJobNotMultiError,
+      EctoJobScheduler.Test.TestJobException
     ],
     max_attempts: "5",
     instrumenter: :new_relic

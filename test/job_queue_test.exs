@@ -19,8 +19,8 @@ defmodule EctoJobScheduler.JobQueueTest do
       test "#{job_queue} when job returns multi and return is successful, should delete job" do
         :ok =
           :telemetry.attach(
-            "#{unquote(job_queue)}-job-executed-handler",
-            [:ecto_job_scheduler, :job, :executed],
+            "#{unquote(job_queue)}-job-execution-stop-handler",
+            [:ecto_job_scheduler, :job_execution, :stop],
             fn event, measurements, metadata, config ->
               send(self(), {event, measurements, metadata, config})
             end,
@@ -54,7 +54,7 @@ defmodule EctoJobScheduler.JobQueueTest do
                  some: "thing"
                ] = Context.get()
 
-        assert_received {[:ecto_job_scheduler, :job, :executed], _measurements, _metadata,
+        assert_received {[:ecto_job_scheduler, :job_execution, :stop], _measurements, _metadata,
                          _config}
       end
 
@@ -149,6 +149,51 @@ defmodule EctoJobScheduler.JobQueueTest do
                  attempt: 1,
                  some: "thing"
                ] = Context.get()
+      end
+
+      test "#{job_queue} when job raises exception, should update job attempt" do
+        :ok =
+          :telemetry.attach(
+            "#{unquote(job_queue)}-job-execution-exception-handler",
+            [:ecto_job_scheduler, :job_execution, :exception],
+            fn event, measurements, metadata, config ->
+              send(self(), {event, measurements, metadata, config})
+            end,
+            nil
+          )
+
+        job_args = %{
+          "type" => "TestJobException",
+          "context" => %{some: :thing}
+        }
+
+        EctoJobHelpers.build_initial_multi(Repo, unquote(job_queue), job_args)
+
+        job_queue = unquote(job_queue)
+        job = Repo.one(unquote(job_queue))
+
+        mock_report_fail(job_queue)
+
+        assert_raise RuntimeError, "Xablau!", fn ->
+          EctoJobHelpers.dispatch_job(Repo, unquote(job_queue), job)
+        end
+
+        assert [
+                 %unquote(job_queue){
+                   attempt: 1,
+                   params: %{"context" => %{"some" => "thing"}, "type" => "TestJobException"}
+                 }
+               ] = Repo.all(unquote(job_queue))
+
+        assert [
+                 params: %{"type" => "TestJobException"},
+                 max_attempts: 5,
+                 attempt: 1,
+                 some: "thing"
+               ] = Context.get()
+
+        assert_received {[:ecto_job_scheduler, :job_execution, :exception], _measurements, _metadata,
+               _config}
       end
     end)
   end

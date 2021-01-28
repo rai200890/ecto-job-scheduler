@@ -93,31 +93,24 @@ defmodule EctoJobScheduler.Job do
       end
 
       defp run_job(%JobInfo{multi: original_multi} = job_info, params) do
-        start = System.monotonic_time(:millisecond)
-
-        result = handle_job(job_info, params)
-
-        runtime = System.monotonic_time(:millisecond) - start
-
-        telemetry_data = %{
-          measurements: %{runtime: runtime},
-          metadata: %{
-            job_info: job_info,
-            type: Map.get(params, "type"),
-            params: Map.delete(params, "type")
-          }
+        telemetry_metadata = %{
+          job_info: job_info,
+          type: Map.get(params, "type"),
+          params: Map.delete(params, "type")
         }
 
-        :telemetry.execute(
-          [:ecto_job_scheduler, :job, :executed],
-          telemetry_data.measurements,
-          telemetry_data.metadata
-        )
+        :telemetry.span(
+          [:ecto_job_scheduler, :job_execution],
+          telemetry_metadata,
+          fn ->
+            result = handle_job(job_info, params)
 
-        EctoJobScheduler.Job.handle_job_result(
-          result,
-          original_multi,
-          config()[:repo]
+            {EctoJobScheduler.Job.handle_job_result(
+               result,
+               original_multi,
+               config()[:repo]
+             ), %{}}
+          end
         )
       end
 
