@@ -58,6 +58,7 @@ defmodule EctoJobScheduler.MixProject do
       {:ecto_job, "~> 3.0"},
       {:ecto_sql, "~> 3.4"},
       {:postgrex, ">= 0.0.0"},
+      {:telemetry, ">= 0.4.2"},
       {:credo, "~> 1.4", only: [:dev, :test], runtime: false},
       {:excoveralls, "~> 0.10", only: :test},
       {:ex_doc, "~> 0.14", only: :dev, runtime: false},

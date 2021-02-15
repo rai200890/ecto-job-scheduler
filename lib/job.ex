@@ -10,21 +10,24 @@ defmodule EctoJobScheduler.Job do
   @callback handle_job(%JobInfo{}, params :: map()) :: any()
 
   def handle_job_result(result, original_multi, repo) do
-    case result do
-      %Ecto.Multi{} = multi ->
-        repo.transaction(multi)
+    result =
+      case result do
+        %Ecto.Multi{} = multi ->
+          repo.transaction(multi)
 
-      :ok ->
-        repo.transaction(original_multi)
-        :ok
+        :ok ->
+          repo.transaction(original_multi)
+          :ok
 
-      {:ok, result} ->
-        repo.transaction(original_multi)
-        {:ok, result}
+        {:ok, result} ->
+          repo.transaction(original_multi)
+          {:ok, result}
 
-      other ->
-        other
-    end
+        other ->
+          other
+      end
+
+    result
   end
 
   def handle_job_result(:ok, job_name) do
@@ -90,9 +93,25 @@ defmodule EctoJobScheduler.Job do
       end
 
       defp run_job(%JobInfo{multi: original_multi} = job_info, params) do
-        job_info
-        |> handle_job(params)
-        |> EctoJobScheduler.Job.handle_job_result(original_multi, config()[:repo])
+        telemetry_metadata = %{
+          job_info: job_info,
+          type: Map.get(params, "type"),
+          params: Map.delete(params, "type")
+        }
+
+        :telemetry.span(
+          [:ecto_job_scheduler, :job_execution],
+          telemetry_metadata,
+          fn ->
+            result = handle_job(job_info, params)
+
+            {EctoJobScheduler.Job.handle_job_result(
+               result,
+               original_multi,
+               config()[:repo]
+             ), %{}}
+          end
+        )
       end
 
       defp sanitizer do

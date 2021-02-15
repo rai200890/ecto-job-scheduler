@@ -28,12 +28,33 @@ defmodule EctoJobScheduler.JobScheduler do
     type = job |> Atom.to_string() |> String.split(".") |> List.last()
     multi_name = type |> Macro.underscore() |> String.to_atom()
 
-    multi
-    |> config[:job_queue].enqueue(
-      multi_name,
-      Map.merge(%{"type" => type}, params),
-      Keyword.merge(job.config(), config)
+    start = System.monotonic_time(:microsecond)
+
+    result =
+      multi
+      |> config[:job_queue].enqueue(
+        multi_name,
+        Map.merge(%{"type" => type}, params),
+        Keyword.merge(job.config(), config)
+      )
+
+    latency = System.monotonic_time(:microsecond) - start
+
+    telemetry_data = %{
+      measurements: %{latency: latency},
+      metadata: %{
+        type: Map.get(params, "type"),
+        params: Map.delete(params, "type")
+      }
+    }
+
+    :telemetry.execute(
+      [:ecto_job_scheduler, :job, :scheduled],
+      telemetry_data.measurements,
+      telemetry_data.metadata
     )
+
+    result
   end
 
   @spec schedule(atom() | %{config: nil | keyword() | map()}, map(), nil | keyword() | map()) ::
