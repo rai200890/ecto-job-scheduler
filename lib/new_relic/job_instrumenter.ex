@@ -19,12 +19,9 @@ defmodule EctoJobScheduler.NewRelic.JobInstrumenter do
         ) ::
           term()
   def transaction(name, function) do
-    start()
+    start(name)
 
-    add_attributes(
-      other_transaction_name: name,
-      request_id: get_request_id()
-    )
+    add_attributes(request_id: get_request_id())
 
     case function.() do
       {:error, reason} ->
@@ -44,14 +41,14 @@ defmodule EctoJobScheduler.NewRelic.JobInstrumenter do
       reraise exception, __STACKTRACE__
   end
 
-  defp start, do: reporter().start()
+  defp start(name), do: transaction().start_transaction("EctoJob", name)
 
   defp add_attributes(attributes) do
-    reporter().add_attributes(attributes)
+    transaction().add_attributes(attributes)
   end
 
   defp fail(kind, reason, stack) do
-    reporter().fail(self(), %{
+    reporter().fail(%{
       kind: kind,
       reason: reason,
       stack: stack
@@ -69,7 +66,7 @@ defmodule EctoJobScheduler.NewRelic.JobInstrumenter do
   defp transaction,
     do:
       Application.get_env(:ecto_job_scheduler, __MODULE__)[:transaction] ||
-        NewRelic.Transaction
+        NewRelic
 
   defp reporter,
     do:

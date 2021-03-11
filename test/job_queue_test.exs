@@ -142,17 +142,17 @@ defmodule EctoJobScheduler.JobQueueTest do
 
   defp mock_report(TestJobQueueNewRelic) do
     TransactionMock
+    |> expect(:start_transaction, fn _, _ -> :ok end)
     |> expect(:stop_transaction, fn -> :ok end)
+    |> expect(:add_attributes, fn _ -> :ok end)
 
     ReporterMock
-    |> expect(:start, fn -> :ok end)
-    |> expect(:add_attributes, fn _ -> :ok end)
   end
 
   defp mock_report(_job_queue), do: nil
 
   defp mock_report_fail(TestJobQueueNewRelic) do
-    TestJobQueueNewRelic |> mock_report() |> expect(:fail, fn _, _ -> :ok end)
+    TestJobQueueNewRelic |> mock_report() |> expect(:fail, fn _ -> :ok end)
   end
 
   defp mock_report_fail(_job_queue), do: nil

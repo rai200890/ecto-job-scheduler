@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Update new_relic_agent to 1.24.3
+
 ## [1.2.3]
 
 ### Fixed
@@ -17,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixes
 
-- Fix current VERSION 
+- Fix current VERSION
 
 ## [1.2.1]
 
