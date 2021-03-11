@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- newrelic 1.24.3
+
 ## [1.2.3]
 
 ### Fixed
@@ -17,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixes
 
-- Fix current VERSION 
+- Fix current VERSION
 
 ## [1.2.1]
 
@@ -55,7 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added support for ecto_job 3
 
-[Unreleased]: https://github.com/rai200890/ecto-job-scheduler/compare/v1.2.0...HEAD
+[unreleased]: https://github.com/rai200890/ecto-job-scheduler/compare/v1.2.0...HEAD
 [1.2.0]: https://github.com/rai200890/ecto-job-scheduler/compare/v1.1.0...1.2.0
 [1.1.0]: https://github.com/rai200890/ecto-job-scheduler/compare/v1.0.2...1.1.0
 [1.0.2]: https://github.com/rai200890/ecto-job-scheduler/compare/v1.0.1...v1.0.2
