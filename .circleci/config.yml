@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: elixir:1.8.2-alpine
+      - image: elixir:1.11.4-alpine
         name: app
         environment:
           MIX_ENV: test

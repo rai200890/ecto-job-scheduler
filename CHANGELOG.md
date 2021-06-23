@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.0]
+
+### Changed
+
+- Update new_relic_agent to 1.27.3
+- Update ecto_sql to 3.6
+
 ## [1.3.0]
 
 ### Changed

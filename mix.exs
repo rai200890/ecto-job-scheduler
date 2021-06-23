@@ -55,15 +55,15 @@ defmodule EctoJobScheduler.MixProject do
 
   defp deps do
     [
-      {:ecto_job, "~> 3.0"},
-      {:ecto_sql, "~> 3.4"},
+      {:ecto_job, "~> 3.1"},
+      {:ecto_sql, "~> 3.6"},
       {:postgrex, ">= 0.0.0"},
-      {:credo, "~> 1.4", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.5.6", only: [:dev, :test], runtime: false},
       {:excoveralls, "~> 0.10", only: :test},
       {:ex_doc, "~> 0.14", only: :dev, runtime: false},
-      {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
-      {:new_relic_agent, "~> 1.24.3", optional: true},
-      {:mox, "~> 0.5", only: [:dev, :test], runtime: false}
+      {:dialyxir, "~> 1.1.0", only: [:dev], runtime: false},
+      {:new_relic_agent, ">= 1.27.3", optional: true},
+      {:mox, "~> 1.0", only: [:dev, :test], runtime: false}
     ]
   end
 end

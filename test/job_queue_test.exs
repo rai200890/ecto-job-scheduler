@@ -38,9 +38,9 @@ defmodule EctoJobScheduler.JobQueueTest do
         assert Repo.all(unquote(job_queue)) == []
 
         assert [
-                 params: %{"type" => "TestJob"},
-                 max_attempts: 5,
                  attempt: 1,
+                 max_attempts: 5,
+                 params: %{"type" => "TestJob"},
                  some: "thing"
                ] = Context.get()
       end
@@ -69,9 +69,9 @@ defmodule EctoJobScheduler.JobQueueTest do
                ] = Repo.all(unquote(job_queue))
 
         assert [
-                 params: %{"type" => "TestJobError"},
-                 max_attempts: 5,
                  attempt: 1,
+                 max_attempts: 5,
+                 params: %{"type" => "TestJobError"},
                  some: "thing"
                ] = Context.get()
       end
@@ -94,9 +94,9 @@ defmodule EctoJobScheduler.JobQueueTest do
         assert Repo.all(unquote(job_queue)) == []
 
         assert [
-                 params: %{"type" => "TestJobNotMultiSuccessful"},
-                 max_attempts: 5,
                  attempt: 1,
+                 max_attempts: 5,
+                 params: %{"type" => "TestJobNotMultiSuccessful"},
                  some: "thing"
                ] = Context.get()
       end
@@ -131,9 +131,9 @@ defmodule EctoJobScheduler.JobQueueTest do
                ] = Repo.all(unquote(job_queue))
 
         assert [
-                 params: %{"type" => "TestJobNotMultiError"},
-                 max_attempts: 5,
                  attempt: 1,
+                 max_attempts: 5,
+                 params: %{"type" => "TestJobNotMultiError"},
                  some: "thing"
                ] = Context.get()
       end
